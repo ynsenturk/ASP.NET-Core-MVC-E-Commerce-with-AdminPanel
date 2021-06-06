@@ -1,0 +1,110 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@using BuildCompleteEcommerce.Models;
+
+<section class="content-header">
+    <h1>
+        Product List
+    </h1>
+</section>
+
+<section class="content">
+
+    @if (TempData["error"] != null)
+    {
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">X</button>
+                    <h4><i class="icon fa fa-ban"></i> Failed</h4>
+                    Deleted Failed!
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row">
+
+        <div class="col-xs-12">
+
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Product List</h3>
+                </div>
+
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <table id="productListTable" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th>Photo</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Category</th>
+                                <th>Featured</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var product in ViewBag.Products)
+                            {
+                                Product pr = (Product)product;
+                                var photo = pr.Photos.SingleOrDefault(p => p.Featured == true);
+                                <tr>
+                                    <td>@product.Id</td>
+                                    <td>@product.Name</td>
+                                    <td><img src="~/products/@photo.Name" width="120" /></td>
+                                    <td>@product.Price</td>
+                                    <td>@(product.Status ? "Show" : "Hide")</td>
+                                    <td>@(product.Featured ? "Featured" : "")</td>
+                                    <td>@product.Category.Name</td>
+                                    <td>
+                                        <a asp-area="admin" asp-controller="product" asp-action="edit" asp-route-id="@product.Id">Edit</a> |
+                                        <a asp-area="admin" asp-controller="product" asp-action="delete" asp-route-id="@product.Id" onclick="return confirm('Are you sure?')">Delete</a> |
+                                        <a asp-area="admin" asp-controller="photo" asp-action="index" asp-route-id="@product.Id">Photo List</a> |
+                                        <a asp-area="admin" asp-controller="photo" asp-action="add" asp-route-id="@product.Id">Add Photo</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th>Photo</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Category</th>
+                                <th>Featured</th>
+                                <th>Action</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<script>
+    $(function () {
+        $('#productListTable').DataTable({
+            'paging': true,
+            'lengthChange': false,
+            'searching': false,
+            'ordering': true,
+            'info': true,
+            'autoWidth': false
+        })
+    })
+</script>
